@@ -1257,17 +1257,30 @@ function renderColbox(p, displayMode){
 }
 
 function renderMultbox(p, displayMode){
-  // 곱셈 자릿수 박스: a x b
   const a = p.a, b = p.b;
-  const lenA = String(a).length;
-  const lenB = String(b).length;
-  const totalLen = Math.max(lenA, lenB) + Math.max(lenB,1) ; // 대략적인 칸 수 (단순 표시용)
   const da = digitsOf(a);
-  return `<table class="colbox-table">
-    <tr>${da.map(d=>`<td>${d}</td>`).join('')}</tr>
-    <tr>${String(b).split('').map((d,i)=> i===0? `<td class="opcell">X</td><td>${d}</td>` : `<td>${d}</td>`).join('')}</tr>
-    <tr class="line-row">${Array(da.length+1).fill('<td class="empty-cell">&nbsp;</td>').join('')}</tr>
-  </table>`;
+  const db = digitsOf(b);
+  const numCols = Math.max(da.length, da.length + db.length - 1); // 숫자 칸 수(연산자 칸 제외)
+
+  // helper: 숫자 배열을 오른쪽 정렬해서 numCols 칸짜리 <td> 배열로
+  const rowCells = (digits)=>{
+    const blanks = numCols - digits.length;
+    return Array(blanks).fill('<td></td>').join('') + digits.map(d=>`<td>${d}</td>`).join('');
+  };
+
+  if(db.length===1){
+    const topRow = `<tr><td class="opcell"></td>${rowCells(da)}</tr>`;
+    const bottomRow = `<tr><td class="opcell">X</td>${rowCells(db)}</tr>`;
+    const lineRow = `<tr class="line-row"><td class="empty-cell">&nbsp;</td>${Array(numCols).fill('<td class="empty-cell">&nbsp;</td>').join('')}</tr>`;
+    return `<table class="colbox-table">${topRow}${bottomRow}${lineRow}</table>`;
+  }
+
+  // 두 자리 이상 X 두 자리 이상: 부분곱 두 줄 + 합계 줄을 보여주는 필산 형태
+  const topRow = `<tr><td class="opcell"></td>${rowCells(da)}</tr>`;
+  const bottomRow = `<tr><td class="opcell">X</td>${rowCells(db)}</tr>`;
+  const lineRow = `<tr class="line-row"><td class="empty-cell">&nbsp;</td>${Array(numCols).fill('<td class="empty-cell">&nbsp;</td>').join('')}</tr>`;
+  const blankRow = `<tr><td class="opcell"></td>${Array(numCols).fill('<td>&nbsp;</td>').join('')}</tr>`;
+  return `<table class="colbox-table">${topRow}${bottomRow}${lineRow}${blankRow}${blankRow}${lineRow}</table>`;
 }
 
 function renderDivbox(p){
