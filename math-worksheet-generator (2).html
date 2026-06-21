@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오늘의 수학 문제지 만들기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FFF8EC;
+  --paper:#FFFFFF;
+  --ink:#3A3024;
+  --sun:#FFB627;
+  --sun-deep:#F2932B;
+  --leaf:#7FB069;
+  --leaf-deep:#5C9447;
+  --sky:#5FA8D3;
+  --berry:#E8604C;
+  --berry-deep:#D14B38;
+  --line:#E8DCC8;
+  --shadow: 0 4px 0 rgba(58,48,36,0.15);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Nanum Gothic', sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  min-height:100vh;
+}
+h1,h2,h3,.jua{font-family:'Jua', sans-serif;}
+.handwrite{font-family:'Gaegu', sans-serif;}
+
+/* ===== App Shell ===== */
+#app{
+  max-width:980px;
+  margin:0 auto;
+  padding:24px 20px 80px;
+}
+
+/* ===== Header ===== */
+.app-header{
+  text-align:center;
+  margin-bottom:28px;
+  position:relative;
+}
+.app-header h1{
+  font-size:34px;
+  color:var(--berry-deep);
+  margin:0 0 4px;
+  letter-spacing:-0.5px;
+}
+.app-header .sub{
+  font-size:15px;
+  color:#8A7E68;
+  font-family:'Gaegu',sans-serif;
+}
+.mascot-row{
+  display:flex;
+  justify-content:center;
+  gap:6px;
+  font-size:28px;
+  margin-bottom:6px;
+}
+
+/* ===== Grade Tabs ===== */
+.grade-tabs{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  margin-bottom:22px;
+  flex-wrap:wrap;
+}
+.grade-tab{
+  background:var(--paper);
+  border:3px solid var(--line);
+  border-radius:20px;
+  padding:10px 18px;
+  cursor:pointer;
+  font-family:'Jua',sans-serif;
+  font-size:16px;
+  color:#A39A85;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  transition:transform .15s ease, border-color .15s ease, color .15s ease;
+  user-select:none;
+}
+.grade-tab .emoji{font-size:22px; filter:grayscale(1); opacity:.5; transition:filter .15s, opacity .15s;}
+.grade-tab:hover{transform:translateY(-2px);}
+.grade-tab.active{
+  border-color:var(--sun-deep);
+  color:var(--berry-deep);
+  background:#FFF3DC;
+  box-shadow:var(--shadow);
+  transform:translateY(-2px);
+}
+.grade-tab.active .emoji{filter:none; opacity:1;}
+
+/* ===== Card ===== */
+.card{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:18px;
+  padding:22px;
+  margin-bottom:18px;
+  box-shadow:6px 6px 0 var(--ink);
+}
+.card h2{
+  margin:0 0 14px;
+  font-size:20px;
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.card h2 .num{
+  background:var(--sun);
+  color:#fff;
+  width:28px;height:28px;
+  border-radius:50%;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  flex-shrink:0;
+}
+
+/* ===== Semester Pills ===== */
+.pill-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.pill{
+  border:2px solid var(--line);
+  background:#FFFDF8;
+  border-radius:14px;
+  padding:8px 14px;
+  font-size:14px;
+  cursor:pointer;
+  font-weight:700;
+  color:#7A6F58;
+  transition:all .15s ease;
+}
+.pill:hover{border-color:var(--sky);}
+.pill.active{
+  background:var(--sky);
+  border-color:var(--sky);
+  color:#fff;
+  box-shadow:3px 3px 0 rgba(58,48,36,0.2);
+}
+
+/* ===== Unit select ===== */
+.unit-select-wrap{
+  margin-bottom:14px;
+}
+select{
+  width:100%;
+  font-family:'Nanum Gothic',sans-serif;
+  font-weight:800;
+  font-size:15px;
+  padding:12px 14px;
+  border:2px solid var(--ink);
+  border-radius:12px;
+  background:#FFFDF8 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='10'><path d='M0 0L7 10L14 0Z' fill='%233A3024'/></svg>") no-repeat right 16px center;
+  appearance:none;
+  color:var(--ink);
+  cursor:pointer;
+}
+select:focus{outline:3px solid var(--sun); outline-offset:1px;}
+
+/* ===== Type grid (stamp cards) ===== */
+.type-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:10px;
+}
+.type-card{
+  position:relative;
+  border:2.5px solid var(--line);
+  border-radius:14px;
+  padding:14px 12px 12px;
+  cursor:pointer;
+  background:#FFFDF8;
+  transition:transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+  text-align:left;
+}
+.type-card:hover{
+  transform:translateY(-2px) rotate(-0.5deg);
+  border-color:var(--leaf);
+}
+.type-card.selected{
+  border-color:var(--berry-deep);
+  background:#FFF1ED;
+  box-shadow:3px 3px 0 var(--berry);
+}
+.type-card .t-label{
+  font-size:13.5px;
+  font-weight:800;
+  line-height:1.35;
+  color:var(--ink);
+  display:block;
+}
+.type-card .stamp{
+  position:absolute;
+  top:-10px;
+  right:-8px;
+  width:34px;height:34px;
+  border-radius:50%;
+  background:var(--berry-deep);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  transform:scale(0) rotate(-20deg);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 2px 4px rgba(0,0,0,.25);
+}
+.type-card.selected .stamp{
+  transform:scale(1) rotate(-12deg);
+}
+
+/* ===== Options row ===== */
+.opt-section{
+  display:flex;
+  gap:24px;
+  flex-wrap:wrap;
+  align-items:flex-start;
+}
+.opt-group{flex:1; min-width:220px;}
+.opt-group label.title{
+  display:block;
+  font-weight:800;
+  margin-bottom:8px;
+  font-size:14px;
+  color:#7A6F58;
+}
+.chip-row{display:flex; gap:8px; flex-wrap:wrap;}
+.chip{
+  border:2px solid var(--line);
+  background:#fff;
+  border-radius:10px;
+  padding:8px 14px;
+  font-weight:800;
+  font-size:13.5px;
+  cursor:pointer;
+  color:#7A6F58;
+  transition:all .12s ease;
+}
+.chip:hover{border-color:var(--leaf);}
+.chip.active{
+  background:var(--leaf);
+  border-color:var(--leaf-deep);
+  color:#fff;
+}
+.toggle-row{display:flex; border:2px solid var(--ink); border-radius:10px; overflow:hidden; width:fit-content;}
+.toggle-row .chip{border:none; border-radius:0; margin:0;}
+.toggle-row .chip.active{background:var(--sun-deep); color:#fff;}
+
+.checkline{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:800;
+  font-size:14px;
+  color:#7A6F58;
+  cursor:pointer;
+  margin-top:10px;
+}
+.checkline input{width:18px;height:18px; accent-color:var(--berry-deep); cursor:pointer;}
+
+/* ===== Generate button ===== */
+.generate-zone{
+  text-align:center;
+  margin:30px 0 10px;
+}
+#generateBtn{
+  font-family:'Jua',sans-serif;
+  font-size:22px;
+  color:#fff;
+  background:var(--berry-deep);
+  border:none;
+  border-radius:50px;
+  padding:18px 46px;
+  cursor:pointer;
+  box-shadow:0 6px 0 #A93726;
+  transition:transform .1s ease, box-shadow .1s ease;
+  position:relative;
+}
+#generateBtn:hover{transform:translateY(-2px);}
+#generateBtn:active{transform:translateY(4px); box-shadow:0 2px 0 #A93726;}
+#generateBtn .dice{display:inline-block; margin-right:6px;}
+#generateBtn.rolling .dice{animation:diceRoll .5s ease;}
+@keyframes diceRoll{
+  0%{transform:rotate(0);}
+  100%{transform:rotate(360deg);}
+}
+.hint-note{
+  margin-top:10px;
+  font-size:13px;
+  color:#A39A85;
+  font-family:'Gaegu',sans-serif;
+}
+
+/* ===== Info note ===== */
+.info-note{
+  background:#FFF3DC;
+  border:2px dashed var(--sun-deep);
+  border-radius:12px;
+  padding:10px 14px;
+  font-size:13px;
+  color:#8A6D2A;
+  margin-top:12px;
+  font-family:'Gaegu',sans-serif;
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+}
+
+/* ===== Worksheet preview ===== */
+#worksheetWrap{display:none;}
+.toolbar{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:16px;
+  flex-wrap:wrap;
+}
+.tool-btn{
+  font-family:'Jua',sans-serif;
+  font-size:15px;
+  padding:10px 20px;
+  border-radius:30px;
+  border:2.5px solid var(--ink);
+  background:#fff;
+  cursor:pointer;
+  color:var(--ink);
+  transition:all .12s ease;
+}
+.tool-btn:hover{transform:translateY(-2px);}
+.tool-btn.primary{background:var(--leaf); border-color:var(--leaf-deep); color:#fff;}
+.tool-btn.ghost{background:#fff;}
+
+#sheetArea{
+  background:#fff;
+}
+.sheet-page{
+  background:#fff;
+  width:100%;
+  max-width:780px;
+  margin:0 auto 28px;
+  padding:18mm 14mm;
+  border:1px solid #ddd;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);
+  position:relative;
+}
+.sheet-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  border-bottom:2.5px solid var(--ink);
+  padding-bottom:10px;
+  margin-bottom:18px;
+}
+.sheet-head .title{
+  font-family:'Jua',sans-serif;
+  font-size:21px;
+}
+.sheet-head .meta{
+  display:flex;
+  gap:14px;
+  font-size:13px;
+  font-family:'Gaegu',sans-serif;
+}
+.sheet-head .meta span{border-bottom:1.4px solid #999; padding:0 4px 2px;}
+.sheet-sub{
+  font-size:12.5px;
+  color:#999;
+  margin:-12px 0 14px;
+  font-family:'Gaegu',sans-serif;
+}
+
+.problems-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px 14px;
+}
+.problems-grid.cols-2{grid-template-columns:repeat(2,1fr);}
+.problem{
+  font-size:15px;
+  break-inside:avoid;
+}
+.problem .pnum{
+  font-weight:800;
+  color:var(--berry-deep);
+  margin-right:4px;
+}
+
+/* problem kind renders */
+.box-diagram{display:flex; flex-direction:column; align-items:center; gap:4px; margin-top:4px;}
+.box-top{
+  border:2px solid var(--ink);
+  border-radius:8px;
+  width:54px;height:34px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px; font-weight:800;
+}
+.box-bottom-row{display:flex; gap:6px;}
+.box-bottom{
+  border:2px solid var(--ink);
+  border-radius:8px;
+  width:46px;height:32px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px; font-weight:800;
+}
+.box-blank{background:repeating-linear-gradient(45deg,#fafafa,#fafafa 4px,#fff 4px,#fff 8px);}
+
+.eq-line{font-size:16px; font-weight:700; letter-spacing:1px;}
+.eq2-line{display:flex; flex-direction:column; gap:4px; font-size:16px; font-weight:700;}
+
+.blank-box{
+  display:inline-block;
+  border:2px solid var(--ink);
+  border-radius:5px;
+  min-width:30px;
+  height:24px;
+  vertical-align:middle;
+  text-align:center;
+}
+
+.colbox-table{border-collapse:collapse; margin-top:4px;}
+.colbox-table td{
+  width:24px;height:26px;
+  text-align:center;
+  font-weight:800;
+  font-size:15px;
+  border:none;
+}
+.colbox-table .opcell{text-align:left; font-size:15px;}
+.colbox-table .line-row td{border-top:2px solid var(--ink); padding-top:2px;}
+.colbox-table .empty-cell{border-bottom:1.6px dotted #bbb;}
+.colbox-head td{font-size:10px; color:#999; font-weight:400;}
+
+.mult-grid-table{border-collapse:collapse;}
+.mult-grid-table td{
+  width:20px;height:24px;
+  text-align:center;
+  font-size:14px;
+  font-weight:800;
+}
+.mult-grid-table .blank-cell{border:1.4px dotted #bbb;}
+
+.takeaway-row{display:flex; gap:2px; font-size:20px; flex-wrap:wrap; max-width:200px;}
+.takeaway-row .crossed{opacity:.3; text-decoration:line-through;}
+
+.repeatsub-line{font-size:14.5px; font-weight:700; margin-bottom:4px;}
+.repeatsub-eq{font-size:16px; font-weight:700;}
+
+.fraction-disp{font-size:0; display:inline-flex; vertical-align:middle; margin:0 3px;}
+.frac-stack{display:inline-flex; flex-direction:column; align-items:center; font-size:15px; font-weight:800; line-height:1.05; vertical-align:middle;}
+.frac-stack .num-part{border-bottom:2px solid var(--ink); padding:0 3px 1px;}
+.frac-stack .den-part{padding:1px 3px 0;}
+.mixed-whole{font-size:16px; font-weight:800; vertical-align:middle; margin-right:2px;}
+
+.verify-line{font-size:14.5px; font-weight:700;}
+
+.divbox-wrap{display:inline-flex; flex-direction:column; align-items:flex-start; font-weight:800; font-size:16px; margin-top:2px;}
+.divbox-quotient{display:flex; gap:2px; margin-left:28px; margin-bottom:2px;}
+.divbox-row{display:flex; align-items:stretch;}
+.divbox-divisor{padding-right:6px; padding-top:3px;}
+.divbox-bracket{
+  border-top:2.5px solid var(--ink);
+  border-left:2.5px solid var(--ink);
+  border-radius:8px 0 0 0;
+  padding:2px 10px 2px 8px;
+}
+.divbox-remainder{font-size:13px; margin-top:5px; margin-left:28px; color:#555;}
+
+/* answer page */
+.answer-page{page-break-before:always;}
+.answer-banner{
+  text-align:center;
+  font-family:'Jua',sans-serif;
+  font-size:19px;
+  color:var(--berry-deep);
+  margin-bottom:14px;
+}
+.answer-list{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px 6px;
+  font-size:13.5px;
+  font-weight:800;
+}
+.answer-list .a-item{color:#555;}
+.answer-list .a-item b{color:var(--berry-deep);}
+
+/* print */
+@media print{
+  body{background:#fff;}
+  .no-print, .confetti-piece{display:none !important;}
+  #app{padding:0; max-width:none;}
+  .sheet-page{
+    box-shadow:none;
+    border:none;
+    margin:0;
+    max-width:none;
+    width:auto;
+  }
+  @page{size:A4; margin:14mm;}
+}
+
+/* confetti */
+.confetti-piece{
+  position:fixed;
+  top:-20px;
+  font-size:18px;
+  pointer-events:none;
+  z-index:999;
+  animation:confettiFall linear forwards;
+}
+@keyframes confettiFall{
+  to{transform:translateY(110vh) rotate(540deg); opacity:0.2;}
+}
+
+footer.app-footer{
+  text-align:center;
+  margin-top:30px;
+  font-size:12px;
+  color:#C9BDA3;
+  font-family:'Gaegu',sans-serif;
+}
+
+@media (max-width:640px){
+  .problems-grid{grid-template-columns:repeat(2,1fr);}
+  .opt-section{gap:14px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="app-header no-print">
+    <div class="mascot-row" id="mascotRow">🐣 🦊 🦉</div>
+    <h1>오늘의 수학 문제지 만들기</h1>
+    <div class="sub">학년을 고르고, 단원을 콕! 찍으면 — 짜잔, 문제지 완성!</div>
+  </header>
+
+  <div class="grade-tabs no-print" id="gradeTabs"></div>
+
+  <div class="card no-print" id="semesterCard">
+    <h2><span class="num">1</span> 학기를 골라볼까?</h2>
+    <div class="pill-row" id="semesterPills"></div>
+    <div class="unit-select-wrap">
+      <select id="unitSelect"></select>
+    </div>
+    <div class="info-note" id="unitInfoNote" style="display:none;"></div>
+  </div>
+
+  <div class="card no-print" id="typeCard">
+    <h2><span class="num">2</span> 어떤 문제로 도장 찍을까?</h2>
+    <div class="type-grid" id="typeGrid"></div>
+  </div>
+
+  <div class="card no-print" id="optionsCard">
+    <h2><span class="num">3</span> 마지막 설정!</h2>
+    <div class="opt-section">
+      <div class="opt-group">
+        <label class="title">문제 개수</label>
+        <div class="chip-row" id="countChips"></div>
+      </div>
+      <div class="opt-group" id="layoutGroup">
+        <label class="title">식 모양</label>
+        <div class="toggle-row" id="layoutToggle"></div>
+      </div>
+      <div class="opt-group">
+        <label class="title">정답지</label>
+        <label class="checkline"><input type="checkbox" id="answerCheck" checked> 정답지도 같이 인쇄하기</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="generate-zone no-print">
+    <button id="generateBtn"><span class="dice">🎲</span>두근두근 문제 뽑기!</button>
+    <div class="hint-note">버튼을 누르면 매번 새로운 문제가 쏟아져요</div>
+  </div>
+
+  <div id="worksheetWrap">
+    <div class="toolbar no-print">
+      <button class="tool-btn primary" id="printBtn">🖨️ 인쇄하기</button>
+      <button class="tool-btn" id="rerollBtn">🔄 다른 문제로 다시!</button>
+      <button class="tool-btn ghost" id="backBtn">⬅️ 처음으로</button>
+    </div>
+    <div id="sheetArea"></div>
+  </div>
+
+  <footer class="app-footer no-print">서버도, 회원가입도 없어요. 이 화면 안에서 모든 게 끝나요 🌤️</footer>
+
+</div>
+
+<script>
+/* ============================================================
+   유틸: 시드 가능한 난수 + 공통 헬퍼
+   ============================================================ */
+function makeRng(seed){
+  let s = seed >>> 0;
+  return function(){
+    s = (s * 1664525 + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+}
+function randInt(rng, min, max){ // inclusive
+  return Math.floor(rng() * (max - min + 1)) + min;
+}
+function pick(rng, arr){ return arr[Math.floor(rng()*arr.length)]; }
+function shuffle(rng, arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(rng()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+/* ============================================================
+   1학년 데이터
+   ============================================================ */
+const GRADE1 = {
+  label:'1학년', emoji:'🐣', color:'#FFB627',
+  semesters:[
+    {
+      label:'1학기', unit:'3. 덧셈과 뺄셈',
+      note:'한 자리 수끼리의 덧셈·뺄셈, 가르기와 모으기를 배워요.',
+      types:[
+        { id:'g1_split9', label:'두 수로 가르기', kind:'box',
+          gen:(rng)=>{
+            const total = randInt(rng,3,9);
+            const a = randInt(rng,1,total-1);
+            const b = total - a;
+            const blank = pick(rng,['a','b','total']);
+            return { kind:'box', top: blank==='total'?null:total, left: blank==='a'?null:a, right: blank==='b'?null:b,
+                     answer: blank==='total'?total:(blank==='a'?a:b) };
+          }},
+        { id:'g1_gather9', label:'두 수를 모으기', kind:'box',
+          gen:(rng)=>{
+            const a = randInt(rng,1,8);
+            const b = randInt(rng,1,9-a);
+            const total = a+b;
+            const blank = pick(rng,['a','b','total']);
+            return { kind:'box', top: blank==='total'?null:total, left: blank==='a'?null:a, right: blank==='b'?null:b,
+                     answer: blank==='total'?total:(blank==='a'?a:b) };
+          }},
+        { id:'g1_addUnder9', label:'몇 + 몇 (합이 9 이하)', kind:'eq',
+          gen:(rng)=>{
+            const a = randInt(rng,1,8);
+            const b = randInt(rng,1,9-a);
+            return { kind:'eq', text:`${a} + ${b} = `, answer:a+b };
+          }},
+        { id:'g1_subUnder9', label:'몇 - 몇 (차가 9 이하)', kind:'eq',
+          gen:(rng)=>{
+            const a = randInt(rng,2,9);
+            const b = randInt(rng,1,a-1);
+            return { kind:'eq', text:`${a} - ${b} = `, answer:a-b };
+          }},
+        { id:'g1_relation_add', label:'덧셈과 뺄셈의 관계', kind:'eq2',
+          gen:(rng)=>{
+            const a = randInt(rng,1,8);
+            const b = randInt(rng,1,9-a);
+            const sum = a+b;
+            return { kind:'eq2', line1:`${a} + ${b} = `, ans1:sum, line2:`${sum} - ${a} = `, ans2:b };
+          }},
+        { id:'g1_relation_sub', label:'뺄셈과 덧셈의 관계', kind:'eq2',
+          gen:(rng)=>{
+            const total = randInt(rng,3,9);
+            const a = randInt(rng,1,total-1);
+            const b = total-a;
+            return { kind:'eq2', line1:`${total} - ${a} = `, ans1:b, line2:`${b} + ${a} = `, ans2:total };
+          }},
+        { id:'g1_blankpos', label:'□ 안의 수 찾기', kind:'blankpos',
+          gen:(rng)=>{
+            const a = randInt(rng,1,8);
+            const b = randInt(rng,1,9-a);
+            const sum = a+b;
+            const mode = pick(rng,['first','second','result']);
+            if(mode==='first') return { kind:'blankpos', text:`▢ + ${b} = ${sum}`, answer:a };
+            if(mode==='second') return { kind:'blankpos', text:`${a} + ▢ = ${sum}`, answer:b };
+            return { kind:'blankpos', text:`${a} + ${b} = ▢`, answer:sum };
+          }},
+      ]
+    },
+    {
+      label:'2학기', unit:'2. 덧셈과 뺄셈 (1)',
+      note:'두 자리 수의 자릿수를 맞춰 세로로 계산해요. 받아올림·받아내림은 아직 없어요.',
+      types:[
+        { id:'g1_add_tens_ones', label:'몇십 + 몇', kind:'colbox',
+          gen:(rng)=>{ const tens=randInt(rng,1,9)*10; const ones=randInt(rng,1,9); return colboxAdd(tens,ones); }},
+        { id:'g1_add_2d_1d', label:'몇십몇 + 몇', kind:'colbox',
+          gen:(rng)=>{
+            const tens = randInt(rng,1,9)*10;
+            const ones1 = randInt(rng,0,8);
+            const a = tens + ones1;
+            const b = randInt(rng,1,9-ones1);
+            return colboxAdd(a,b);
+          }},
+        { id:'g1_add_tens_tens', label:'몇십 + 몇십', kind:'colbox',
+          gen:(rng)=>{ const a=randInt(rng,1,8)*10; const b=randInt(rng,1,9-a/10)*10; return colboxAdd(a,b); }},
+        { id:'g1_add_2d_2d', label:'몇십몇 + 몇십몇', kind:'colbox',
+          gen:(rng)=>{
+            const t1=randInt(rng,1,7); const o1=randInt(rng,0,8);
+            const t2max = 9-t1; const t2 = randInt(rng,1,Math.max(1,t2max));
+            const o2max = 9-o1; const o2 = randInt(rng,0,Math.max(0,o2max));
+            return colboxAdd(t1*10+o1, t2*10+o2);
+          }},
+        { id:'g1_sub_tens_tens', label:'몇십 - 몇십', kind:'colbox',
+          gen:(rng)=>{ const a=randInt(rng,2,9)*10; const b=randInt(rng,1,a/10)*10; return colboxSub(a,b); }},
+        { id:'g1_sub_2d_1d', label:'몇십몇 - 몇', kind:'colbox',
+          gen:(rng)=>{ const tens=randInt(rng,1,9); const ones=randInt(rng,1,9); const a=tens*10+ones; const b=randInt(rng,1,ones); return colboxSub(a,b); }},
+        { id:'g1_sub_2d_2d', label:'몇십몇 - 몇십몇', kind:'colbox',
+          gen:(rng)=>{
+            const o2=randInt(rng,0,8); const o1=randInt(rng,o2,9);
+            const t2=randInt(rng,1,8); const t1=randInt(rng,t2,9);
+            return colboxSub(t1*10+o1, t2*10+o2);
+          }},
+        { id:'g1_relation_2digit', label:'두 자리 수 덧셈·뺄셈의 관계', kind:'eq2',
+          gen:(rng)=>{
+            const t1=randInt(rng,1,6); const o1=randInt(rng,0,8);
+            const t2max=9-t1; const t2=randInt(rng,1,Math.max(1,t2max));
+            const o2max=9-o1; const o2=randInt(rng,0,Math.max(0,o2max));
+            const a=t1*10+o1, b=t2*10+o2, sum=a+b;
+            return { kind:'eq2', line1:`${a} + ${b} = `, ans1:sum, line2:`${sum} - ${a} = `, ans2:b };
+          }},
+      ]
+    },
+    {
+      label:'2학기', unit:'4. 덧셈과 뺄셈 (2)',
+      note:'세 수의 계산과 10을 만드는 보수 연습이에요.',
+      types:[
+        { id:'g1_three_add', label:'몇 + 몇 + 몇', kind:'eq',
+          gen:(rng)=>{ const a=randInt(rng,1,5),b=randInt(rng,1,5),c=randInt(rng,1,5); return { kind:'eq', text:`${a} + ${b} + ${c} = `, answer:a+b+c }; }},
+        { id:'g1_three_sub', label:'몇 - 몇 - 몇', kind:'eq',
+          gen:(rng)=>{ const a=randInt(rng,6,9); const b=randInt(rng,1,3); const c=randInt(rng,1,a-b-1>0?a-b-1:1); return { kind:'eq', text:`${a} - ${b} - ${c} = `, answer:a-b-c }; }},
+        { id:'g1_three_mixed', label:'몇 + 몇 - 몇 (혼합)', kind:'eq',
+          gen:(rng)=>{ const a=randInt(rng,2,6),b=randInt(rng,1,4); const sum=a+b; const c=randInt(rng,1,Math.min(sum,5)); return { kind:'eq', text:`${a} + ${b} - ${c} = `, answer:sum-c }; }},
+        { id:'g1_split10', label:'10을 두 수로 가르기', kind:'box',
+          gen:(rng)=>{ const a=randInt(rng,1,9); const b=10-a; const blank=pick(rng,['a','b']);
+            return { kind:'box', top:10, left: blank==='a'?null:a, right: blank==='b'?null:b, answer: blank==='a'?a:b }; }},
+        { id:'g1_gather10', label:'10이 되도록 모으기', kind:'box',
+          gen:(rng)=>{ const a=randInt(rng,1,9); const b=10-a; const blank=pick(rng,['a','b']);
+            return { kind:'box', top:null, left: blank==='a'?null:a, right: blank==='b'?null:b, answer: blank==='a'?a:b, forceTotal:10 }; }},
+        { id:'g1_make10_add', label:'10이 되는 더하기', kind:'blankpos',
+          gen:(rng)=>{ const a=randInt(rng,1,9); const b=10-a; const mode=pick(rng,['second','first']);
+            if(mode==='second') return { kind:'blankpos', text:`${a} + ▢ = 10`, answer:b };
+            return { kind:'blankpos', text:`▢ + ${b} = 10`, answer:a }; }},
+        { id:'g1_make10_sub', label:'10에서 빼기', kind:'eq',
+          gen:(rng)=>{ const a=randInt(rng,1,9); return { kind:'eq', text:`10 - ${a} = `, answer:10-a }; }},
+        { id:'g1_sum10_three', label:'두 수의 합이 10이 되는 세 수의 덧셈', kind:'eq',
+          gen:(rng)=>{ const a=randInt(rng,1,9); const b=10-a; const c=randInt(rng,1,9); const order=shuffle(rng,[a,b,c]);
+            return { kind:'eq', text:`${order[0]} + ${order[1]} + ${order[2]} = `, answer:order[0]+order[1]+order[2] }; }},
+      ]
+    },
+    {
+      label:'2학기', unit:'6. 덧셈과 뺄셈 (3)',
+      note:'받아올림과 받아내림이 있는 계산이에요. 조금 어렵지만 할 수 있어요!',
+      types:[
+        { id:'g1_add_carry', label:'몇 + 몇 (받아올림)', kind:'eq',
+          gen:(rng)=>{ const a=randInt(rng,3,9); const bMin=Math.max(1,10-a); const b=randInt(rng,bMin,9); return { kind:'eq', text:`${a} + ${b} = `, answer:a+b }; }},
+        { id:'g1_add_carry_three', label:'몇 + 몇 + 몇 (받아올림)', kind:'eq',
+          gen:(rng)=>{ const a=randInt(rng,2,7),b=randInt(rng,2,7),c=randInt(rng,2,7); return { kind:'eq', text:`${a} + ${b} + ${c} = `, answer:a+b+c }; }},
+        { id:'g1_sub_borrow_teen', label:'십몇 - 몇 (받아내림)', kind:'eq',
+          gen:(rng)=>{ const a=randInt(rng,11,18); const b=randInt(rng,a-9,9); return { kind:'eq', text:`${a} - ${b} = `, answer:a-b }; }},
+        { id:'g1_sub_borrow_three', label:'십몇 - 몇 - 몇 (받아내림)', kind:'eq',
+          gen:(rng)=>{ const a=randInt(rng,12,18); const b=randInt(rng,1,5); const c=randInt(rng,1,Math.max(1,a-b-9)); return { kind:'eq', text:`${a} - ${b} - ${c} = `, answer:a-b-c }; }},
+        { id:'g1_mixed_carry_borrow', label:'혼합 (받아올림/받아내림)', kind:'eq',
+          gen:(rng)=>{
+            if(rng()<0.5){ const a=randInt(rng,3,9); const b=randInt(rng,Math.max(1,10-a),9); return { kind:'eq', text:`${a} + ${b} = `, answer:a+b }; }
+            const a=randInt(rng,11,18); const b=randInt(rng,a-9,9); return { kind:'eq', text:`${a} - ${b} = `, answer:a-b };
+          }},
+      ]
+    }
+  ]
+};
+
+function colboxAdd(a,b){ return { kind:'colbox', op:'+', a, b, answer:a+b }; }
+function colboxSub(a,b){ return { kind:'colbox', op:'-', a, b, answer:a-b }; }
+/* ============================================================
+   2학년 데이터 (캡처 근거: 1학기 덧셈뺄셈 19유형, 2학기 곱셈구구 4유형)
+   ============================================================ */
+
+// 받아올림이 정확히 n번 일어나는 두 자리+두 자리 덧셈 생성
+function gen2dAddCarry(rng, carries){ // carries: 0,1,2
+  let o1,o2,t1,t2;
+  if(carries===0){
+    o1=randInt(rng,0,9); o2=randInt(rng,0,9-o1);
+    t1=randInt(rng,1,9); t2=randInt(rng,1,9-t1);
+  } else if(carries===1){
+    o1=randInt(rng,1,9); o2=randInt(rng,10-o1,9); // 일의자리 올림 발생
+    t1=randInt(rng,1,7); // t1<=7이어야 t2>=1 범위 확보 가능
+    const t2Max = 8-t1; // t1+t2+1 <= 9 보장
+    t2=randInt(rng,1,Math.max(1,t2Max));
+  } else { // carries===2
+    o1=randInt(rng,1,9); o2=randInt(rng,10-o1,9);
+    t1=randInt(rng,1,9); t2=randInt(rng,10-t1,9); // 십의자리도 올림
+  }
+  const a=t1*10+o1, b=t2*10+o2;
+  return colboxAdd(a,b);
+}
+
+function gen2dSubBorrow(rng, borrows){ // 0 or 1 (두 자리 받아내림)
+  let o1,o2,t1,t2;
+  if(borrows===0){
+    o2=randInt(rng,0,9); o1=randInt(rng,o2,9);
+    t2=randInt(rng,1,9); t1=randInt(rng,t2,9);
+  } else {
+    o2=randInt(rng,1,9); o1=randInt(rng,0,o2-1); // 받아내림 필요
+    t2=randInt(rng,1,8); t1=randInt(rng,t2+1,9);
+  }
+  const a=t1*10+o1, b=t2*10+o2;
+  return colboxSub(a,b);
+}
+
+const GRADE2 = {
+  label:'2학년', emoji:'🦊', color:'#5FA8D3',
+  semesters:[
+    {
+      label:'1학기', unit:'3. 덧셈과 뺄셈',
+      note:'두 자리 수의 받아올림·받아내림을 배우고, 세 수의 계산까지 나가요.',
+      types:[
+        { id:'g2_add_2d1d_carry', label:'몇십몇 + 몇 (받아올림)', kind:'colbox',
+          gen:(rng)=>{ const tens=randInt(rng,1,9); const ones1=randInt(rng,1,9); const b=randInt(rng,10-ones1,9); return colboxAdd(tens*10+ones1,b); }},
+        { id:'g2_add_2d2d_carry1', label:'몇십몇 + 몇십몇 (받아올림 1번)', kind:'colbox',
+          gen:(rng)=>gen2dAddCarry(rng,1) },
+        { id:'g2_add_2d2d_carry2', label:'몇십몇 + 몇십몇 (받아올림 2번)', kind:'colbox',
+          gen:(rng)=>gen2dAddCarry(rng,2) },
+        { id:'g2_sub_2d1d_borrow', label:'몇십몇 - 몇 (받아내림)', kind:'colbox',
+          gen:(rng)=>{ const tens=randInt(rng,1,9); const ones=randInt(rng,0,8); const a=tens*10+ones; const b=randInt(rng,ones+1,9); return colboxSub(a,b); }},
+        { id:'g2_sub_2d2d_borrow1', label:'몇십몇 - 몇십몇 (받아내림 1번)', kind:'colbox',
+          gen:(rng)=>gen2dSubBorrow(rng,1) },
+        { id:'g2_mixed_2d1d_pm', label:'몇십몇 ± 몇 (받아올림/내림)', kind:'colbox',
+          gen:(rng)=>{
+            if(rng()<0.5){ const tens=randInt(rng,1,9); const ones1=randInt(rng,1,9); const b=randInt(rng,10-ones1,9); return colboxAdd(tens*10+ones1,b); }
+            const tens=randInt(rng,1,9); const ones=randInt(rng,0,8); const a=tens*10+ones; const b=randInt(rng,ones+1,9); return colboxSub(a,b);
+          }},
+        { id:'g2_mixed_2d2d_pm', label:'몇십몇 ± 몇십몇', kind:'colbox',
+          gen:(rng)=>{ if(rng()<0.5) return gen2dAddCarry(rng,pick(rng,[1,2])); return gen2dSubBorrow(rng,pick(rng,[0,1])); }},
+        { id:'g2_three_add_carry', label:'몇십몇 + 몇 + 몇 (받아올림)', kind:'eq',
+          gen:(rng)=>{ const a=randInt(rng,15,79); const b=randInt(rng,3,9); const c=randInt(rng,3,9); return { kind:'eq', text:`${a} + ${b} + ${c} = `, answer:a+b+c }; }},
+        { id:'g2_three_sub_borrow', label:'몇십몇 - 몇 - 몇 (받아내림)', kind:'eq',
+          gen:(rng)=>{ const a=randInt(rng,30,90); const b=randInt(rng,3,9); const c=randInt(rng,3,Math.min(9,a-b-1)); return { kind:'eq', text:`${a} - ${b} - ${c} = `, answer:a-b-c }; }},
+        { id:'g2_three_mixed_pm', label:'몇십몇 + 몇 - 몇 (혼합)', kind:'eq',
+          gen:(rng)=>{ const a=randInt(rng,20,80); const b=randInt(rng,3,9); const c=randInt(rng,3,9); return { kind:'eq', text:`${a} + ${b} - ${c} = `, answer:a+b-c }; }},
+        { id:'g2_three_pm_2digit_1', label:'몇십몇 ± 몇 ± 몇', kind:'eq',
+          gen:(rng)=>{
+            const a=randInt(rng,20,80); const b=randInt(rng,3,9); const c=randInt(rng,3,9);
+            const ops=shuffle(rng,['+','-']); 
+            let result = a; let text = `${a} `;
+            [b,c].forEach((v,i)=>{ const op=ops[i%2]; text+=`${op} ${v} `; result = op==='+'? result+v : result-v; });
+            return { kind:'eq', text:text+'= ', answer:result };
+          }},
+        { id:'g2_three_pm_2digit_2', label:'몇십몇 ± 몇십몇 ± 몇십몇', kind:'eq',
+          gen:(rng)=>{
+            const a=randInt(rng,20,70); const b=randInt(rng,10,29); const c=randInt(rng,10,29);
+            const op1=pick(rng,['+','-']); const op2=pick(rng,['+','-']);
+            let result = a; result = op1==='+'? result+b : result-b; result = op2==='+'? result+c : result-c;
+            return { kind:'eq', text:`${a} ${op1} ${b} ${op2} ${c} = `, answer: result };
+          }},
+      ]
+    },
+    {
+      label:'2학기', unit:'2. 곱셈구구',
+      note:'구구단을 단별로 연습하고, □ 안의 수도 찾아봐요.',
+      types:[
+        { id:'g2_mult_table_2534', label:'2, 5, 3, 4의 단 곱셈구구', kind:'eq',
+          gen:(rng)=>{ const tableNums=[2,5,3,4]; const t=pick(rng,tableNums); const n=randInt(rng,1,9); const [a,b]=shuffle(rng,[t,n]); return { kind:'eq', text:`${a} X ${b} = `, answer:a*b }; }},
+        { id:'g2_mult_table_6789', label:'6, 7, 8, 9의 단 곱셈구구', kind:'eq',
+          gen:(rng)=>{ const tableNums=[6,7,8,9]; const t=pick(rng,tableNums); const n=randInt(rng,1,9); const [a,b]=shuffle(rng,[t,n]); return { kind:'eq', text:`${a} X ${b} = `, answer:a*b }; }},
+        { id:'g2_mult_table_10', label:'1의 단, 0의 단을 포함한 곱셈구구', kind:'eq',
+          gen:(rng)=>{ const t=pick(rng,[0,1,2,3,4,5,6,7,8,9]); const n=randInt(rng,0,9); const [a,b]=shuffle(rng,[t,n]); return { kind:'eq', text:`${a} X ${b} = `, answer:a*b }; }},
+        { id:'g2_mult_blank', label:'곱셈구구에서 □ 안의 수 찾기', kind:'blankpos',
+          gen:(rng)=>{
+            const a=randInt(rng,1,9); const b=randInt(rng,1,9); const prod=a*b;
+            const mode=pick(rng,['first','second']);
+            if(mode==='first') return { kind:'blankpos', text:`▢ X ${b} = ${prod}`, answer:a };
+            return { kind:'blankpos', text:`${a} X ▢ = ${prod}`, answer:b };
+          }},
+      ]
+    }
+  ]
+};
+/* ============================================================
+   3학년 데이터
+   ============================================================ */
+
+// 자리 하나의 (d1,d2)를 생성: carryIn 고려, shouldCarryOut 여부 지정, lo는 각 숫자의 최소값(보통 0, 최상위 자리는 1)
+function digitPair(rng, carryIn, shouldCarryOut, lo1, lo2){
+  if(shouldCarryOut){
+    // d1+d2+carryIn >= 10 을 만족하는 쌍 (lo1<=d1<=9, lo2<=d2<=9)
+    let d1 = randInt(rng, Math.max(lo1,1), 9);
+    let minD2 = Math.max(lo2, 10-carryIn-d1);
+    if(minD2>9){ d1 = Math.max(lo1,1,10-carryIn-9); minD2 = Math.max(lo2,10-carryIn-d1); }
+    let d2 = randInt(rng, Math.min(9,minD2), 9);
+    return [d1,d2];
+  } else {
+    // d1+d2+carryIn <= 9 를 만족하는 쌍
+    const cap = 9-carryIn; // d1+d2 <= cap
+    let d1 = randInt(rng, lo1, Math.max(lo1,cap-lo2));
+    let d2 = randInt(rng, lo2, Math.max(lo2,cap-d1));
+    return [d1,d2];
+  }
+}
+
+// 세 자리 수 덧셈, 받아올림 횟수를 정확히 n번으로 제어 (0~3)
+function gen3dAddCarry(rng, carries){
+  const carryAtOnes = carries>=1;
+  const carryAtTens = carries>=2;
+  const carryAtHund = carries>=3;
+
+  const [o1,o2] = digitPair(rng, 0, carryAtOnes, 0, 0);
+  const carryFromOnes = carryAtOnes ? 1 : 0;
+
+  const [t1,t2] = digitPair(rng, carryFromOnes, carryAtTens, 0, 0);
+  const carryFromTens = carryAtTens ? 1 : 0;
+
+  const [h1,h2] = digitPair(rng, carryFromTens, carryAtHund, 1, 1);
+
+  const a = h1*100+t1*10+o1, b = h2*100+t2*10+o2;
+  return colboxAdd(a,b);
+}
+
+function gen3dSubBorrow(rng, borrows){ // 0,1,2 (받아내림 횟수)
+  const borrowAtOnes = borrows>=1;
+  const borrowAtTens = borrows>=2;
+
+  // 일의 자리: 빌림-in 없음
+  let o1,o2;
+  if(borrowAtOnes){ o2=randInt(rng,1,9); o1=randInt(rng,0,o2-1); }
+  else { o2=randInt(rng,0,9); o1=randInt(rng,o2,9); }
+  const borrowFromOnes = borrowAtOnes ? 1 : 0;
+
+  // 십의 자리: 빌림-in = borrowFromOnes. (t1-borrowFromOnes) vs t2
+  let t1,t2;
+  if(borrowAtTens){
+    t2=randInt(rng,1,9);
+    // t1 - borrowFromOnes < t2  =>  t1 < t2 + borrowFromOnes
+    const upper = Math.min(9, t2+borrowFromOnes-1);
+    t1 = randInt(rng,0,Math.max(0,upper));
+  } else {
+    t2=randInt(rng,0,9-borrowFromOnes);
+    // t1 - borrowFromOnes >= t2 => t1 >= t2+borrowFromOnes
+    t1 = randInt(rng, Math.min(9,t2+borrowFromOnes), 9);
+  }
+  const borrowFromTens = borrowAtTens ? 1 : 0;
+
+  // 백의 자리: 빌림-in = borrowFromTens, h1>=h2+borrowFromTens (빌릴 필요 없음, 항상 충분하게)
+  let h2 = randInt(rng,1,8);
+  let h1 = randInt(rng, Math.min(9,h2+borrowFromTens), 9);
+
+  const a=h1*100+t1*10+o1, b=h2*100+t2*10+o2;
+  return colboxSub(a,b);
+}
+
+function gen4dAdd(rng){
+  const a = randInt(rng,1000,8999);
+  const b = randInt(rng,1000,9999-a);
+  return colboxAdd(a,b);
+}
+function gen4d3dAdd(rng){
+  const a = randInt(rng,1000,8999);
+  const b = randInt(rng,100,Math.min(999,9999-a));
+  return colboxAdd(a,b);
+}
+function gen4dSub(rng){
+  const a = randInt(rng,2000,9999);
+  const b = randInt(rng,1000,a-100);
+  return colboxSub(a,b);
+}
+function gen4d3dSub(rng){
+  const a = randInt(rng,1100,9999);
+  const b = randInt(rng,100,Math.min(999,a-100));
+  return colboxSub(a,b);
+}
+
+// 곱셈: 올림 위치 제어 (두 자리 x 한 자리)
+function gen2d1dMult(rng, mode){ // mode: 'none' | 'tens' | 'ones' | 'both'
+  let tens,ones,mul;
+  if(mode==='none'){
+    // 올림이 전혀 없도록: ones*mul < 10, tens*mul < 10
+    ones = randInt(rng,0,3); mul = randInt(rng,2,3);
+    while(ones*mul>=10){ ones = randInt(rng,0,3); mul = randInt(rng,2,3); }
+    tens = randInt(rng,1,3);
+    while(tens*mul>=10){ tens = randInt(rng,1,3); }
+  } else if(mode==='tens'){
+    ones = randInt(rng,0,3); 
+    mul = randInt(rng,2,9);
+    while(ones*mul>=10){ ones = randInt(rng,0,2); }
+    tens = randInt(rng,2,9);
+    while(tens*mul<10){ tens = randInt(rng,2,9); }
+  } else if(mode==='ones'){
+    tens = randInt(rng,1,3);
+    mul = randInt(rng,2,4);
+    while(tens*mul>=10){ tens=randInt(rng,1,2); }
+    ones = randInt(rng,4,9);
+    mul = Math.max(mul,2);
+    while(ones*mul<10){ ones = randInt(rng,4,9); }
+  } else { // both
+    tens = randInt(rng,4,9); ones = randInt(rng,4,9); mul = randInt(rng,2,9);
+    let tries=0;
+    while(!(ones*mul>=10 && tens*mul>=10) && tries<30){ tens=randInt(rng,4,9); ones=randInt(rng,4,9); mul=randInt(rng,3,9); tries++; }
+  }
+  const num = tens*10+ones;
+  return { kind:'multbox', a:num, b:mul, answer:num*mul };
+}
+
+function gen3d1dMult(rng, hasCarry){
+  let h,t,o,mul;
+  if(!hasCarry){
+    h=randInt(rng,1,3); t=randInt(rng,0,3); o=randInt(rng,0,3); mul=randInt(rng,2,3);
+    while(h*mul>=10||t*mul>=10||o*mul>=10){ h=randInt(rng,1,3); t=randInt(rng,0,3); o=randInt(rng,0,3); mul=randInt(rng,2,3); }
+  } else {
+    h=randInt(rng,2,9); t=randInt(rng,2,9); o=randInt(rng,2,9); mul=randInt(rng,2,9);
+  }
+  const num = h*100+t*10+o;
+  return { kind:'multbox', a:num, b:mul, answer:num*mul };
+}
+
+function genTensTensMult(rng){
+  const a=randInt(rng,2,9)*10; const b=randInt(rng,2,9)*10;
+  return { kind:'multbox', a,b, answer:a*b };
+}
+function gen2dTensMult(rng){
+  const a=randInt(rng,11,99); const b=randInt(rng,2,9)*10;
+  return { kind:'multbox', a,b, answer:a*b };
+}
+function gen2d2dMult(rng){
+  const a=randInt(rng,11,39); const b=randInt(rng,11,39);
+  return { kind:'multbox', a,b, answer:a*b };
+}
+
+// 나눗셈
+function genDivBasic(rng, withCarry, withRemainder){
+  // 몇십(몇) ÷ 몇  형태, 2자리÷1자리
+  let divisor = randInt(rng,2,9);
+  let quotient = randInt(rng,10,12); // 두자리 몫
+  let remainder = withRemainder? randInt(rng,1,divisor-1) : 0;
+  let dividend = divisor*quotient + remainder;
+  if(dividend>99){ quotient = randInt(rng,10,Math.floor(99/divisor)); dividend = divisor*quotient+remainder; }
+  return { kind:'divbox', dividend, divisor, quotient, remainder };
+}
+function genDiv3d1d(rng, withRemainder){
+  const divisor = randInt(rng,2,9);
+  const quotient = randInt(rng,100,150);
+  const remainder = withRemainder? randInt(rng,1,divisor-1) : 0;
+  let dividend = divisor*quotient+remainder;
+  if(dividend>999){ const q2=randInt(rng,100,Math.floor(999/divisor)); dividend=divisor*q2+remainder; return { kind:'divbox', dividend, divisor, quotient:q2, remainder }; }
+  return { kind:'divbox', dividend, divisor, quotient, remainder };
+}
+
+const GRADE3 = {
+  label:'3학년', emoji:'🦉', color:'#7FB069',
+  semesters:[
+    {
+      label:'1학기', unit:'1. 덧셈과 뺄셈',
+      note:'세 자리, 네 자리 수의 덧셈과 뺄셈을 받아올림·받아내림 횟수별로 연습해요.',
+      types:[
+        { id:'g3_add_3d_carry0', label:'세 자리 수의 덧셈 (받아올림 없음)', kind:'colbox', gen:(rng)=>gen3dAddCarry(rng,0) },
+        { id:'g3_add_3d_carry1', label:'세 자리 수의 덧셈 (받아올림 1번)', kind:'colbox', gen:(rng)=>gen3dAddCarry(rng,1) },
+        { id:'g3_add_3d_carry2', label:'세 자리 수의 덧셈 (받아올림 2번)', kind:'colbox', gen:(rng)=>gen3dAddCarry(rng,2) },
+        { id:'g3_add_3d_carry3', label:'세 자리 수의 덧셈 (받아올림 3번)', kind:'colbox', gen:(rng)=>gen3dAddCarry(rng,3) },
+        { id:'g3_add_4d3d', label:'네 자리 수 + 세 자리 수', kind:'colbox', gen:gen4d3dAdd },
+        { id:'g3_add_4d4d', label:'네 자리 수 + 네 자리 수', kind:'colbox', gen:gen4dAdd },
+        { id:'g3_sub_3d_borrow0', label:'세 자리 수의 뺄셈 (받아내림 없음)', kind:'colbox', gen:(rng)=>gen3dSubBorrow(rng,0) },
+        { id:'g3_sub_3d_borrow1', label:'세 자리 수의 뺄셈 (받아내림 1번)', kind:'colbox', gen:(rng)=>gen3dSubBorrow(rng,1) },
+        { id:'g3_sub_3d_borrow2', label:'세 자리 수의 뺄셈 (받아내림 2번)', kind:'colbox', gen:(rng)=>gen3dSubBorrow(rng,2) },
+        { id:'g3_sub_4d3d', label:'네 자리 수 - 세 자리 수', kind:'colbox', gen:gen4d3dSub },
+        { id:'g3_sub_4d4d', label:'네 자리 수 - 네 자리 수', kind:'colbox', gen:gen4dSub },
+        { id:'g3_mixed_3d_pm', label:'세 자리 수 ± 세 자리 수', kind:'colbox',
+          gen:(rng)=>{ if(rng()<0.5) return gen3dAddCarry(rng,pick(rng,[1,2,3])); return gen3dSubBorrow(rng,pick(rng,[0,1,2])); } },
+        { id:'g3_mixed_4d_pm', label:'네 자리 수 ± 네 자리 수', kind:'colbox',
+          gen:(rng)=>{ if(rng()<0.5) return gen4dAdd(rng); return gen4dSub(rng); } },
+        { id:'g3_three_pm_3d', label:'세 수의 덧셈/뺄셈 (세 자리 수)', kind:'eq',
+          gen:(rng)=>{
+            const a=randInt(rng,100,500); const b=randInt(rng,100,300); const c=randInt(rng,100,300);
+            const op1=pick(rng,['+','-']); const op2=pick(rng,['+','-']);
+            let result=a; result = op1==='+'? result+b: result-b; result = op2==='+'? result+c: result-c;
+            return { kind:'eq', text:`${a} ${op1} ${b} ${op2} ${c} = `, answer:result };
+          }},
+        { id:'g3_three_pm_4d', label:'세 수의 덧셈/뺄셈 (네 자리 수)', kind:'eq',
+          gen:(rng)=>{
+            const a=randInt(rng,1000,5000); const b=randInt(rng,1000,3000); const c=randInt(rng,1000,3000);
+            const op1=pick(rng,['+','-']); const op2=pick(rng,['+','-']);
+            let result=a; result = op1==='+'? result+b: result-b; result = op2==='+'? result+c: result-c;
+            return { kind:'eq', text:`${a} ${op1} ${b} ${op2} ${c} = `, answer:result };
+          }},
+      ]
+    },
+    {
+      label:'1학기', unit:'3. 나눗셈',
+      note:'곱셈을 거꾸로 생각하며 나눗셈의 의미를 배워요.',
+      types:[
+        { id:'g3_div_repeat_sub', label:'나눗셈의 기초 (묶어서 빼기)', kind:'repeatsub',
+          gen:(rng)=>{
+            const divisor = randInt(rng,2,9); const times=randInt(rng,3,8); const dividend=divisor*times;
+            return { kind:'repeatsub', dividend, divisor, times };
+          }},
+        { id:'g3_mult_to_div', label:'곱셈과 나눗셈의 관계', kind:'eq2',
+          gen:(rng)=>{ const a=randInt(rng,2,9); const b=randInt(rng,2,9); const prod=a*b;
+            return { kind:'eq2', line1:`${a} X ${b} = `, ans1:prod, line2:`${prod} ÷ ${a} = `, ans2:b }; }},
+        { id:'g3_div_to_mult', label:'나눗셈과 곱셈의 관계', kind:'eq2',
+          gen:(rng)=>{ const a=randInt(rng,2,9); const b=randInt(rng,2,9); const prod=a*b;
+            return { kind:'eq2', line1:`${prod} ÷ ${a} = `, ans1:b, line2:`${a} X ${b} = `, ans2:prod }; }},
+        { id:'g3_div_in_table', label:'곱셈구구 내에서의 나눗셈', kind:'eq',
+          gen:(rng)=>{ const a=randInt(rng,2,9); const b=randInt(rng,2,9); const prod=a*b;
+            return { kind:'eq', text:`${prod} ÷ ${a} = `, answer:b }; }},
+      ]
+    },
+    {
+      label:'1학기', unit:'4. 곱셈',
+      note:'두 자리 수 곱셈을 올림이 어디서 일어나는지에 따라 나눠서 연습해요.',
+      types:[
+        { id:'g3_mult_tens_1d', label:'몇십 X 몇', kind:'multbox',
+          gen:(rng)=>{ const a=randInt(rng,1,9)*10; const b=randInt(rng,2,9); return { kind:'multbox', a,b, answer:a*b }; }},
+        { id:'g3_mult_2d1d_none', label:'몇십몇 X 몇 (올림 없음)', kind:'multbox', gen:(rng)=>gen2d1dMult(rng,'none') },
+        { id:'g3_mult_2d1d_tens', label:'몇십몇 X 몇 (십의 자리 올림)', kind:'multbox', gen:(rng)=>gen2d1dMult(rng,'tens') },
+        { id:'g3_mult_2d1d_ones', label:'몇십몇 X 몇 (일의 자리 올림)', kind:'multbox', gen:(rng)=>gen2d1dMult(rng,'ones') },
+        { id:'g3_mult_2d1d_both', label:'몇십몇 X 몇 (십,일의 자리 모두 올림)', kind:'multbox', gen:(rng)=>gen2d1dMult(rng,'both') },
+        { id:'g3_mult_2d1d_mix', label:'몇십몇 X 몇 (종합)', kind:'multbox',
+          gen:(rng)=>gen2d1dMult(rng, pick(rng,['none','tens','ones','both'])) },
+      ]
+    },
+    {
+      label:'2학기', unit:'1. 곱셈',
+      note:'세 자리 수 곱셈과 두 자리 수끼리의 곱셈으로 나아가요.',
+      types:[
+        { id:'g3_mult_3d1d_none', label:'세 자리 수 X 한 자리 수 (올림 없음)', kind:'multbox', gen:(rng)=>gen3d1dMult(rng,false) },
+        { id:'g3_mult_3d1d_carry', label:'세 자리 수 X 한 자리 수 (올림 있음)', kind:'multbox', gen:(rng)=>gen3d1dMult(rng,true) },
+        { id:'g3_mult_tens_tens', label:'몇십 X 몇십', kind:'multbox', gen:genTensTensMult },
+        { id:'g3_mult_2d_tens', label:'두 자리 수 X 몇십', kind:'multbox', gen:gen2dTensMult },
+        { id:'g3_mult_2d2d', label:'두 자리 수 X 두 자리 수', kind:'multbox', gen:gen2d2dMult },
+      ]
+    },
+    {
+      label:'2학기', unit:'2. 나눗셈',
+      note:'몫과 나머지를 구하고, 검산으로 답을 확인해요.',
+      types:[
+        { id:'g3_div_basic', label:'(몇십)몇 ÷ 몇 (내림 없고 나머지도 없음)', kind:'divbox', gen:(rng)=>genDivBasic(rng,false,false) },
+        { id:'g3_div_carry_noremainder', label:'(몇십)몇 ÷ 몇 (내림 있으나 나머지 없음)', kind:'divbox', gen:(rng)=>genDivBasic(rng,true,false) },
+        { id:'g3_div_carry_remainder', label:'(몇십)몇 ÷ 몇 (내림 있고 나머지도 있음)', kind:'divbox', gen:(rng)=>genDivBasic(rng,true,true) },
+        { id:'g3_div_3d1d', label:'몇백몇십몇 ÷ 몇', kind:'divbox', gen:(rng)=>genDiv3d1d(rng,true) },
+        { id:'g3_div_qr', label:'나눗셈의 몫과 나머지', kind:'divbox', gen:(rng)=>genDivBasic(rng,true,pick(rng,[true,false])) },
+        { id:'g3_div_verify', label:'나눗셈의 검산', kind:'verify',
+          gen:(rng)=>{ const d=genDivBasic(rng,true,true); return { ...d, kind:'verify' }; }},
+      ]
+    },
+    {
+      label:'2학기', unit:'4. 분수',
+      note:'대분수와 가분수를 서로 바꾸고, 크기를 비교해요.',
+      types:[
+        { id:'g3_frac_mixed_to_improper', label:'대분수를 가분수로 나타내기', kind:'fracconvert',
+          gen:(rng)=>{ const whole=randInt(rng,1,9); const den=randInt(rng,2,9); const num=randInt(rng,1,den-1);
+            return { kind:'fracconvert', dir:'m2i', whole, num, den, ansNum: whole*den+num, ansDen: den }; }},
+        { id:'g3_frac_improper_to_mixed', label:'가분수를 대분수로 나타내기', kind:'fracconvert',
+          gen:(rng)=>{ const den=randInt(rng,2,9); const whole=randInt(rng,1,9); const extra=randInt(rng,1,den-1); const num=whole*den+extra;
+            return { kind:'fracconvert', dir:'i2m', num, den, ansWhole: whole, ansNum: extra, ansDen: den }; }},
+        { id:'g3_frac_compare_same', label:'분모가 같은 가분수/대분수 크기 비교', kind:'fraccompare',
+          gen:(rng)=>{
+            const den=randInt(rng,3,9);
+            const mkImproper=()=>{ const num=randInt(rng,den+1,den*3); return {type:'i', num, den}; };
+            const mkMixed=()=>{ const whole=randInt(rng,1,4); const num=randInt(rng,1,den-1); return {type:'m', whole, num, den}; };
+            const left = pick(rng,[mkImproper(),mkImproper()]);
+            const right = pick(rng,[mkImproper(),mkImproper()]);
+            const lv = left.type==='i'? left.num/left.den : left.whole+left.num/left.den;
+            const rv = right.type==='i'? right.num/right.den : right.whole+right.num/right.den;
+            return { kind:'fraccompare', left, right, answer: lv>rv?'>':(lv<rv?'<':'=') };
+          }},
+        { id:'g3_frac_compare_mixed_improper', label:'가분수와 대분수의 크기 비교', kind:'fraccompare',
+          gen:(rng)=>{
+            const den=randInt(rng,3,9);
+            const whole=randInt(rng,1,4); const num=randInt(rng,1,den-1);
+            const left = {type:'m', whole, num, den};
+            const inum = randInt(rng,den+1,den*4);
+            const right = {type:'i', num:inum, den};
+            const lv = whole+num/den; const rv = inum/den;
+            return { kind:'fraccompare', left, right, answer: lv>rv?'>':(lv<rv?'<':'=') };
+          }},
+      ]
+    }
+  ]
+};
+/* ============================================================
+   렌더링: 문제 데이터(kind별) -> HTML 문자열
+   ============================================================ */
+function renderProblem(p, displayMode){ // displayMode: 'horizontal' | 'vertical' (8세이상 토글용, 1~3학년은 kind가 이미 결정)
+  switch(p.kind){
+    case 'box': return renderBox(p);
+    case 'eq': return renderEq(p);
+    case 'eq2': return renderEq2(p);
+    case 'blankpos': return renderBlankpos(p);
+    case 'colbox': return renderColbox(p, displayMode);
+    case 'multbox': return renderMultbox(p, displayMode);
+    case 'divbox': return renderDivbox(p);
+    case 'repeatsub': return renderRepeatsub(p);
+    case 'verify': return renderVerify(p);
+    case 'fracconvert': return renderFracConvert(p);
+    case 'fraccompare': return renderFracCompare(p);
+    default: return '<span>?</span>';
+  }
+}
+
+function blankOrVal(v){
+  return (v===null||v===undefined) ? `<span class="box-blank" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">&nbsp;</span>` : v;
+}
+
+function renderBox(p){
+  const topVal = p.forceTotal!==undefined ? (p.top===null? p.forceTotal : p.top) : p.top;
+  return `
+  <div class="box-diagram">
+    <div class="box-top">${blankOrVal(topVal)}</div>
+    <div class="box-bottom-row">
+      <div class="box-bottom">${blankOrVal(p.left)}</div>
+      <div class="box-bottom">${blankOrVal(p.right)}</div>
+    </div>
+  </div>`;
+}
+
+function renderEq(p){
+  return `<div class="eq-line">${p.text}<span class="blank-box" style="width:38px;"></span></div>`;
+}
+
+function renderEq2(p){
+  return `<div class="eq2-line">
+    <div>${p.line1}<span class="blank-box" style="width:34px;"></span></div>
+    <div>${p.line2}<span class="blank-box" style="width:34px;"></span></div>
+  </div>`;
+}
+
+function renderBlankpos(p){
+  return `<div class="eq-line">${p.text}</div>`;
+}
+
+function digitsOf(n){ return String(Math.abs(n)).split('').map(Number); }
+
+function renderColbox(p, displayMode){
+  const a = p.a, b = p.b, op = p.op;
+  const maxLen = Math.max(String(a).length, String(b).length) + 1;
+  const da = digitsOf(a), db = digitsOf(b);
+  // pad
+  while(da.length<maxLen) da.unshift(null);
+  while(db.length<maxLen) db.unshift(null);
+  let rows = '';
+  rows += '<tr>' + da.map(d=>`<td>${d===null?'':d}</td>`).join('') + '</tr>';
+  rows += '<tr>' + db.map((d,i)=> i===0? `<td class="opcell">${op}</td>` : `<td>${d===null?'':d}</td>`).join('') + '</tr>';
+  const emptyRow = '<tr class="line-row">' + Array(maxLen).fill('<td class="empty-cell">&nbsp;</td>').join('') + '</tr>';
+  return `<table class="colbox-table">${rows}${emptyRow}</table>`;
+}
+
+function renderMultbox(p, displayMode){
+  // 곱셈 자릿수 박스: a x b
+  const a = p.a, b = p.b;
+  const lenA = String(a).length;
+  const lenB = String(b).length;
+  const totalLen = Math.max(lenA, lenB) + Math.max(lenB,1) ; // 대략적인 칸 수 (단순 표시용)
+  const da = digitsOf(a);
+  return `<table class="colbox-table">
+    <tr>${da.map(d=>`<td>${d}</td>`).join('')}</tr>
+    <tr>${String(b).split('').map((d,i)=> i===0? `<td class="opcell">X</td><td>${d}</td>` : `<td>${d}</td>`).join('')}</tr>
+    <tr class="line-row">${Array(da.length+1).fill('<td class="empty-cell">&nbsp;</td>').join('')}</tr>
+  </table>`;
+}
+
+function renderDivbox(p){
+  // 캡처 스타일: 위에 몫 칸, 그 아래 "divisor ⌐ dividend" 형태, 맨아래 나머지
+  const qDigits = String(p.quotient).length;
+  return `<div class="divbox-wrap">
+    <div class="divbox-quotient">${Array(qDigits).fill('<span class="blank-box" style="width:22px;height:24px;"></span>').join('')}</div>
+    <div class="divbox-row">
+      <span class="divbox-divisor">${p.divisor}</span>
+      <span class="divbox-bracket">${p.dividend}</span>
+    </div>
+    ${p.remainder!==undefined ? `<div class="divbox-remainder">나머지 <span class="blank-box" style="width:26px;height:22px;"></span></div>` : ''}
+  </div>`;
+}
+
+function renderRepeatsub(p){
+  let line = `${p.dividend}`;
+  for(let i=0;i<p.times;i++) line += ` - ${p.divisor}`;
+  line += ` = 0`;
+  return `<div class="repeatsub-line">${line}</div>
+  <div class="repeatsub-eq">➡ ${p.dividend} ÷ <span class="blank-box" style="width:30px;"></span> = <span class="blank-box" style="width:30px;"></span></div>`;
+}
+
+function renderVerify(p){
+  return `<div class="verify-line">${p.dividend} ÷ ${p.divisor} = <span class="blank-box" style="width:28px;"></span> ... <span class="blank-box" style="width:28px;"></span></div>
+  <div class="verify-line" style="margin-top:6px; color:#888;">검산: <span class="blank-box" style="width:24px;"></span> X ${p.divisor} + <span class="blank-box" style="width:24px;"></span> = <span class="blank-box" style="width:28px;"></span></div>`;
+}
+
+function fracHTML(num, den){
+  return `<span class="frac-stack"><span class="num-part">${num}</span><span class="den-part">${den}</span></span>`;
+}
+function mixedHTML(whole, num, den){
+  return `<span class="mixed-whole">${whole}</span>${fracHTML(num,den)}`;
+}
+
+function renderFracConvert(p){
+  if(p.dir==='m2i'){
+    return `<div class="eq-line">${mixedHTML(p.whole,p.num,p.den)} = <span class="blank-box" style="width:50px; height:34px;"></span></div>`;
+  }
+  return `<div class="eq-line">${fracHTML(p.num,p.den)} = <span class="blank-box" style="width:60px; height:34px;"></span></div>`;
+}
+
+function fracDisplayOnly(f){
+  return f.type==='i' ? fracHTML(f.num,f.den) : mixedHTML(f.whole,f.num,f.den);
+}
+function renderFracCompare(p){
+  return `<div class="eq-line" style="display:flex; align-items:center; gap:8px;">
+    ${fracDisplayOnly(p.left)}
+    <span class="blank-box" style="width:30px;"></span>
+    ${fracDisplayOnly(p.right)}
+  </div>`;
+}
+
+/* 정답 표시용 텍스트 */
+function answerText(p){
+  switch(p.kind){
+    case 'box': {
+      if(p.top===null) return `위 ${p.answer}`;
+      if(p.left===null) return `왼쪽 ${p.answer}`;
+      return `오른쪽 ${p.answer}`;
+    }
+    case 'eq': return `${p.answer}`;
+    case 'eq2': return `${p.ans1}, ${p.ans2}`;
+    case 'blankpos': return `${p.answer}`;
+    case 'colbox': return `${p.answer}`;
+    case 'multbox': return `${p.answer}`;
+    case 'divbox': return p.remainder ? `${p.quotient} 나머지 ${p.remainder}` : `${p.quotient}`;
+    case 'repeatsub': return `${p.divisor}, ${p.times}`;
+    case 'verify': return `${p.quotient} ... ${p.remainder} (검산 ${p.quotient}×${p.divisor}+${p.remainder}=${p.dividend})`;
+    case 'fracconvert': return p.dir==='m2i' ? `${p.ansNum}/${p.ansDen}` : `${p.ansWhole} ${p.ansNum}/${p.ansDen}`;
+    case 'fraccompare': return p.answer;
+    default: return '?';
+  }
+}
+/* ============================================================
+   메인 앱 로직
+   ============================================================ */
+const GRADES = { 1: GRADE1, 2: GRADE2, 3: GRADE3 };
+
+const state = {
+  grade: 1,
+  semesterIdx: 0,
+  unitIdx: 0,
+  selectedTypeIds: new Set(),
+  count: 20,
+  showAnswer: true,
+  layout: 'horizontal', // 영향 적음 (1~3학년은 kind로 이미 결정되지만 토글 자리 유지)
+};
+
+function currentGrade(){ return GRADES[state.grade]; }
+function semestersOfGrade(){ return currentGrade().semesters; }
+// semester+unit 묶음 리스트 (학기 라벨 중복 가능하므로 인덱스로 관리)
+function unitList(){ return semestersOfGrade(); }
+
+/* ----- 학년 탭 ----- */
+function renderGradeTabs(){
+  const wrap = document.getElementById('gradeTabs');
+  wrap.innerHTML = '';
+  [1,2,3].forEach(g=>{
+    const grade = GRADES[g];
+    const btn = document.createElement('div');
+    btn.className = 'grade-tab' + (state.grade===g ? ' active':'');
+    btn.innerHTML = `<span class="emoji">${grade.emoji}</span> ${grade.label}`;
+    btn.onclick = ()=>{
+      state.grade = g;
+      state.unitIdx = 0;
+      state.selectedTypeIds = new Set();
+      renderAll();
+      stampPulse(btn);
+    };
+    wrap.appendChild(btn);
+  });
+}
+
+/* ----- 학기/단원 선택 ----- */
+function renderSemesterPills(){
+  const wrap = document.getElementById('semesterPills');
+  wrap.innerHTML = '';
+  const sems = unitList();
+  // 학기 라벨 그룹화 (1학기/2학기) - distinct
+  const labels = [...new Set(sems.map(s=>s.label))];
+  labels.forEach(label=>{
+    const pill = document.createElement('div');
+    pill.className = 'pill' + (sems[state.unitIdx].label===label ? ' active':'');
+    pill.textContent = label;
+    pill.onclick = ()=>{
+      const firstIdx = sems.findIndex(s=>s.label===label);
+      state.unitIdx = firstIdx;
+      state.selectedTypeIds = new Set();
+      renderAll();
+    };
+    wrap.appendChild(pill);
+  });
+}
+
+function renderUnitSelect(){
+  const sel = document.getElementById('unitSelect');
+  sel.innerHTML = '';
+  const sems = unitList();
+  const currentLabel = sems[state.unitIdx].label;
+  sems.forEach((s, idx)=>{
+    if(s.label!==currentLabel) return;
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = s.unit;
+    if(idx===state.unitIdx) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  sel.onchange = (e)=>{
+    state.unitIdx = parseInt(e.target.value);
+    state.selectedTypeIds = new Set();
+    renderAll();
+  };
+  const note = document.getElementById('unitInfoNote');
+  const unit = sems[state.unitIdx];
+  if(unit.note){
+    note.style.display = 'flex';
+    note.innerHTML = `<span>💡</span><span>${unit.note}</span>`;
+  } else {
+    note.style.display = 'none';
+  }
+}
+
+/* ----- 유형 선택 카드 ----- */
+const STAMP_EMOJIS = ['⭐','✅','🌟','💮','🎯','🍀'];
+
+function renderTypeGrid(){
+  const grid = document.getElementById('typeGrid');
+  grid.innerHTML = '';
+  const unit = unitList()[state.unitIdx];
+  unit.types.forEach((t,i)=>{
+    const card = document.createElement('div');
+    card.className = 'type-card' + (state.selectedTypeIds.has(t.id) ? ' selected':'');
+    card.innerHTML = `<span class="t-label">${t.label}</span><div class="stamp">${STAMP_EMOJIS[i%STAMP_EMOJIS.length]}</div>`;
+    card.onclick = ()=>{
+      if(state.selectedTypeIds.has(t.id)){
+        state.selectedTypeIds.delete(t.id);
+      } else {
+        state.selectedTypeIds.add(t.id);
+      }
+      renderTypeGrid();
+    };
+    grid.appendChild(card);
+  });
+}
+
+/* ----- 옵션: 문제 개수 ----- */
+function renderCountChips(){
+  const wrap = document.getElementById('countChips');
+  wrap.innerHTML = '';
+  [10,15,20,25,30].forEach(n=>{
+    const chip = document.createElement('div');
+    chip.className = 'chip' + (state.count===n?' active':'');
+    chip.textContent = n+'개';
+    chip.onclick = ()=>{ state.count=n; renderCountChips(); };
+    wrap.appendChild(chip);
+  });
+}
+
+/* ----- 마스코트 펄스 애니메이션 (선택 효과) ----- */
+function stampPulse(el){
+  el.animate([
+    { transform:'scale(1)' },
+    { transform:'scale(1.12)' },
+    { transform:'scale(1)' }
+  ], { duration:260, easing:'cubic-bezier(.34,1.56,.64,1)' });
+}
+
+/* ----- confetti ----- */
+function fireConfetti(){
+  const emojis = ['🎉','✨','⭐','🌟','🎊'];
+  for(let i=0;i<18;i++){
+    const span = document.createElement('span');
+    span.className = 'confetti-piece';
+    span.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    span.style.left = Math.random()*100+'vw';
+    span.style.animationDuration = (1.6+Math.random()*1.2)+'s';
+    span.style.fontSize = (14+Math.random()*14)+'px';
+    document.body.appendChild(span);
+    setTimeout(()=>span.remove(), 3000);
+  }
+}
+
+/* ----- 전체 렌더 ----- */
+function renderAll(){
+  renderGradeTabs();
+  renderSemesterPills();
+  renderUnitSelect();
+  renderTypeGrid();
+  renderCountChips();
+}
+
+/* ============================================================
+   문제지 생성
+   ============================================================ */
+function buildWorksheet(){
+  const unit = unitList()[state.unitIdx];
+  const chosenTypes = unit.types.filter(t=>state.selectedTypeIds.has(t.id));
+  if(chosenTypes.length===0) return null;
+
+  const seed = Date.now() % 2147483647;
+  const rng = makeRng(seed);
+
+  const problems = [];
+  for(let i=0;i<state.count;i++){
+    const t = pick(rng, chosenTypes);
+    const data = t.gen(rng);
+    problems.push(data);
+  }
+  return { problems, unit, grade: state.grade };
+}
+
+function renderWorksheet(ws){
+  const area = document.getElementById('sheetArea');
+  area.innerHTML = '';
+
+  const grade = GRADES[ws.grade];
+  const dateStr = new Date().toLocaleDateString('ko-KR');
+
+  // 문제 페이지(여러 장으로 나눌 수도 있지만 우선 한 페이지에 grid로)
+  const page = document.createElement('div');
+  page.className = 'sheet-page';
+  page.innerHTML = `
+    <div class="sheet-head">
+      <div>
+        <div class="title">${grade.emoji} ${grade.label} · ${ws.unit.unit}</div>
+      </div>
+      <div class="meta">
+        <span>이름: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span>날짜: ${dateStr}</span>
+        <span>점수: &nbsp;&nbsp;&nbsp;&nbsp;</span>
+      </div>
+    </div>
+    <div class="sheet-sub">${ws.unit.label} · ${ws.unit.note||''}</div>
+    <div class="problems-grid" id="problemsGrid"></div>
+  `;
+  area.appendChild(page);
+
+  const grid = page.querySelector('#problemsGrid');
+  ws.problems.forEach((p,i)=>{
+    const div = document.createElement('div');
+    div.className = 'problem';
+    div.innerHTML = `<span class="pnum">${i+1}.</span>${renderProblem(p)}`;
+    grid.appendChild(div);
+  });
+
+  if(state.showAnswer){
+    const ansPage = document.createElement('div');
+    ansPage.className = 'sheet-page answer-page';
+    ansPage.innerHTML = `
+      <div class="answer-banner">✏️ 정답지 — ${grade.label} · ${ws.unit.unit}</div>
+      <div class="answer-list" id="answerList"></div>
+    `;
+    area.appendChild(ansPage);
+    const list = ansPage.querySelector('#answerList');
+    ws.problems.forEach((p,i)=>{
+      const item = document.createElement('div');
+      item.className = 'a-item';
+      item.innerHTML = `${i+1}. <b>${answerText(p)}</b>`;
+      list.appendChild(item);
+    });
+  }
+}
+
+/* ============================================================
+   이벤트 바인딩
+   ============================================================ */
+let lastWorksheet = null;
+
+document.getElementById('generateBtn').addEventListener('click', ()=>{
+  const btn = document.getElementById('generateBtn');
+  if(state.selectedTypeIds.size===0){
+    btn.animate([{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}], {duration:300});
+    alert('문제 유형을 하나 이상 골라주세요! 카드를 톡 눌러보세요 😊');
+    return;
+  }
+  btn.classList.add('rolling');
+  setTimeout(()=>btn.classList.remove('rolling'), 500);
+
+  const ws = buildWorksheet();
+  if(!ws) return;
+  lastWorksheet = ws;
+  renderWorksheet(ws);
+  document.getElementById('worksheetWrap').style.display = 'block';
+  document.getElementById('worksheetWrap').scrollIntoView({behavior:'smooth'});
+  fireConfetti();
+});
+
+document.getElementById('answerCheck').addEventListener('change', (e)=>{
+  state.showAnswer = e.target.checked;
+  if(lastWorksheet) renderWorksheet(lastWorksheet);
+});
+
+document.getElementById('printBtn').addEventListener('click', ()=>{
+  window.print();
+});
+
+document.getElementById('rerollBtn').addEventListener('click', ()=>{
+  const ws = buildWorksheet();
+  if(!ws) return;
+  lastWorksheet = ws;
+  renderWorksheet(ws);
+  fireConfetti();
+});
+
+document.getElementById('backBtn').addEventListener('click', ()=>{
+  document.getElementById('worksheetWrap').style.display = 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* layout toggle - 1~3학년에서는 표시만 하고 큰 영향 없음 (가로식 단원 표시용 안내) */
+function renderLayoutToggle(){
+  const wrap = document.getElementById('layoutToggle');
+  const group = document.getElementById('layoutGroup');
+  group.style.display = 'none'; // 1~3학년은 kind가 단원별로 고정되어 토글 불필요
+}
+renderLayoutToggle();
+
+/* ----- 초기 실행 ----- */
+renderAll();
+
+</script>
+</body>
+</html>
